@@ -32,21 +32,32 @@ module.exports = yeoman.generators.Base.extend({
       store   : true
     }, {
       type: 'input',
+      name: 'proxy',
+      message: 'Do you need an API server?',
+      choices: ['y','N'],
+      default: 'y'
+    }, {
+      type: 'input',
       name: 'bower',
       message: 'Would you like the private bower repo?',
       default: 'http://bower.level:5678'
+    }, {
+      type: 'choices',
+      name: 'skipLibUpdate',
+      message: 'Would you check for the latest library versions?',
+      choices: ['y','N'],
+      default: 'y'
     }];
 
     this.prompt(prompts, function (props) {
       this.props = props;
+      this.env.options.proxy = props.proxy;
       this.env.options.bower = props.bower;
       this.env.options.email = props.email;
       this.env.options.sass = true;
       this.env.options.express = true;
       this.env.options.standardApp = true;
       this.env.options.router = true;
-
-      yosay('Checking for the latest library versions.');
 
       var deps = {
         webpackdeps:[
@@ -103,14 +114,22 @@ module.exports = yeoman.generators.Base.extend({
           'webpack-dev-server'
          ]
        };
-
-      Object.keys(deps).map(function(key){
+       
+      var say = this.log;
+      var keys = Object.keys(deps);
+      var libCount = keys.reduce(function(c, n){return c + (!deps[n] ? 0 : deps[n].length)}, 0);
+      var i = 0;
+      keys.map(function(key){
         var packages = deps[key];
         if (!packages) {
           return '';
         }
         var includes = packages.map(function(name){
+          if (props.skipLibUpdate === 'n'){
+            return '      "'+name+'": "*",\n';
+          }
           var version = exec("npm show "+name+" version").toString('utf8').replace(/\n/g,"");
+          say('Checking '+name+' ('+(i++)+'/'+libCount+').');
           return '      "'+name+'": "^'+version+'",\n';
         }).join('');
         this.env.options[key] = includes;
@@ -167,10 +186,13 @@ module.exports = yeoman.generators.Base.extend({
 
       cp('_server.js','server/server.js');
       cp('_index.html','src/assets/index.html');
+      cp('_VERSION','VERSION');
     }
   },
 
   install: function () {
     this.installDependencies();
+    this.log('Install Complete.\n');
+    this.log('Now run `npm run go` to start the devlopment server.');
   }
 });

@@ -11,12 +11,13 @@
   "mainInput": "src/main.js",
   "mainOutput": "dist/index.html",
   "scripts": {
-    "up": "webpack-dev-server --config webpack.hot.config.js --watch --progress --colors --port 8000 --inline --publicPath js --content-base dist/ ",
-    "modules": "webpack --config webpack.dist.config.js --progress --profile --colors --v --debug --display-modules",
-    "build": "rm -rf ./dist && rm -rf ./build && mkdir ./build && webpack --config webpack.dist.config.js --progress --colors",
+    "go": "open http://localhost:8000 && BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/",
+    "up": "BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/ ",
+    "modules": "webpack --production --progress --profile --colors --v --debug --display-modules",
+    "build": "rm -rf ./dist && rm -rf ./build && mkdir ./build && webpack --production --progress --colors",
     "build-up": "npm run build && open http://localhost:8080 && node --harmony server/server.js",
 
-    "dry": "rm -rf ./dist && rm -rf ./build && webpack --config webpack.dist.config.js --progress --colors",
+    "dry": "rm -rf ./dist && rm -rf ./build && webpack --production --progress --colors",
     "dry-up": "npm run dry && open http://localhost:8080 && node --harmony server/server.js",
 
     "docker-build": "docker build -t docker.level/<%= Appname %>:latest .",

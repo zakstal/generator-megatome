@@ -11,7 +11,7 @@ The stack sets up and configures:
 * BaconJS
 * Bower w/ private repo
 * Docker container for web app
-* Webpack w/ hot-loader and advanced customizations
+* Webpack w/ hot-loader, proxy-server and advanced customizations
 * Barebone Express server
 
 The coming road map includes:
@@ -49,7 +49,7 @@ yo Megatome MyAppName
 4. Run the Webpack dev server
 
 ```bash
-npm run up
+npm run go
 ```
 
 ### Webpack Configuration options

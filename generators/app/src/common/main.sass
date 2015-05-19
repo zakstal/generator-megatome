@@ -1,4 +1,4 @@
-@import ./common/normalize.sass
+@import normalize.sass
 
 .app, .page
   width: 100%
@@ -7,16 +7,19 @@
   
 
 /* Default page transition is a fade. Override with page-level sass of these classes. */
+.page
+  position: absolute // for transitions to be on top of each other
+
 .fade-enter
   opacity: 0.01
-  transition: opacity 0.5s ease-in 1.3s
+  transition: opacity 400ms ease-in 200ms
 
 .fade-enter.fade-enter-active
   opacity: 1
 
 .fade-leave
   opacity: 1
-  transition: opacity 1.5s ease-in
+  transition: opacity 400ms ease-in
 
 .fade-leave.fade-leave-active
   opacity: 0.01

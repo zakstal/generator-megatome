@@ -17,15 +17,15 @@ let PageOneProxy = React.createClass({
 });
 
 let PageTwoProxy = React.createClass({
-  mixins: [require('react-proxy!pages/PageOne').Mixin],
+  mixins: [require('react-proxy!pages/PageTwo').Mixin],
   statics: {
     /* ensure the new page is loaded then animate to the new page */
     willTransitionTo: function (transition, params, query, callback) {
       require.ensure([], function() {
-        var Component = require('pages/PageOne');
+        var Component = require('pages/PageTwo');
         // do any async data loading here
         callback();
-      }, 'PageOne');
+      }, 'PageTwo');
     }
   }
 });

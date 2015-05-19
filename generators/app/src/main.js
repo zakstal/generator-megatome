@@ -6,10 +6,11 @@ if (__DEV__) {
   require('common/debugging');
 }
 
-require('bootstrap/main.sass');
+require('common/main.sass');
 
 // routes can be leveraged via client or browser
 let routes = require('routes'),
+  RouteHandler = Router.RouteHandler,
   TransitionGroup = React.addons.CSSTransitionGroup;
 
 // bootstrapping to the index.html

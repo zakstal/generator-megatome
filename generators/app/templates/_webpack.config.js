@@ -1,7 +1,7 @@
 var isProd = (process.argv.indexOf('--production') >= 0);
 var options = (isProd ? require("./webpack.dist.config.js") : require("./webpack.hot.config.js"));
 
-(function(options){
+module.exports = (function(options){
   var fs = require('fs'),
   version = fs.readFileSync("./VERSION"),
   path = require("path"),
@@ -112,7 +112,8 @@ var baseConfig = {
 
   devServer: {
     contentBase: 'dist/',
-    proxy: {'*': { target: 'http://localhost:8080' }},
+    proxy: null,
+    historyApiFallback: true,
     stats: {
       cached: false,
       exclude: [/node_modules/,/bower_components/]
@@ -193,6 +194,10 @@ function updateDevServer(config, options) {
     config.output.chunkFilename = "[name]-[id].js";
   }
 
+  if (options.proxy) {
+    config.devServer.proxy = {'*': { target: 'http://localhost:8080' }};
+  }
+
   if (options.hotComponents) {
     config.module.loaders.some(function(loader) {
       if(loader.loader.indexOf('jsx') === 0){
@@ -201,8 +206,9 @@ function updateDevServer(config, options) {
       };
       return false;
     })
-    
+    config.devServer.hot = true
     config.plugins.push(new webpack.HotModuleReplacementPlugin());
+    // also include <script src="http://localhost:8000/webpack-dev-server.js"></script> in index.html
   }
 }
 
