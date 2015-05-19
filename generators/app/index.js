@@ -51,7 +51,7 @@ module.exports = yeoman.generators.Base.extend({
 
     this.prompt(prompts, function (props) {
       this.props = props;
-      this.env.options.proxy = props.proxy;
+      this.env.options.proxy = props.proxy === 'y';
       this.env.options.bower = props.bower;
       this.env.options.email = props.email;
       this.env.options.sass = true;

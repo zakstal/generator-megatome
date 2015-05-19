@@ -7,11 +7,11 @@ Master web stack setup for Level Money.
 The stack sets up and configures:
 * React w/ ES6/Babel support
 * React-Router w/ asynchronous page/api loading and animated transitions
+* Docker container for web app
+* Webpack w/ hot-loader, proxy-server and advanced customizations
 * ImmutableJS
 * BaconJS
 * Bower w/ private repo
-* Docker container for web app
-* Webpack w/ hot-loader, proxy-server and advanced customizations
 * Barebone Express server
 
 The coming road map includes:
@@ -43,7 +43,7 @@ npm install -g generator-megatome
 3. Create a new project
 
 ```bash
-yo Megatome MyAppName
+yo megatome MyAppName
 ```
 
 4. Run the Webpack dev server
