@@ -1,0 +1,40 @@
+{
+  "name": "<%= Appname %>", 
+  "version": "0.0.0",
+  "dependencies": {},
+  "description": "",
+  "repository": "",
+  "private": true,
+  "src": "src",
+  "test": "test",
+  "dist": "dist",
+  "mainInput": "src/main.js",
+  "mainOutput": "dist/index.html",
+  "scripts": {
+    "up": "webpack-dev-server --config webpack.hot.config.js --watch --progress --colors --port 8000 --inline --publicPath js --content-base dist/ ",
+    "modules": "webpack --config webpack.dist.config.js --progress --profile --colors --v --debug --display-modules",
+    "build": "rm -rf ./dist && rm -rf ./build && mkdir ./build && webpack --config webpack.dist.config.js --progress --colors",
+    "build-up": "npm run build && open http://localhost:8080 && node --harmony server/server.js",
+
+    "dry": "rm -rf ./dist && rm -rf ./build && webpack --config webpack.dist.config.js --progress --colors",
+    "dry-up": "npm run dry && open http://localhost:8080 && node --harmony server/server.js",
+
+    "docker-build": "docker build -t docker.level/<%= Appname %>:latest .",
+    "docker-push": "docker push docker.level/<%= Appname %>:latest",
+    "docker-run": "open http://`boot2docker ip`:8080 && docker run -ti -p 8080:8080 docker.level/<%= Appname %>:latest",
+
+    "postinstall": "<% if(env.options.bower) { %> ./node_modules/bower/bin/bower install <%} %>"
+  },
+  "dependencies": {
+<%= env.options.sassdeps %>
+<%= env.options.bowerdeps %>
+<%= env.options.expressdeps %>
+<%= env.options.routerdeps %>
+<%= env.options.appdeps %>
+<%= env.options.webpackdeps.slice(0,-2) %>
+  },
+  "devDependencies": {
+<%= env.options.testdeps %>
+<%= env.options.devdeps.slice(0,-2) %>
+  }
+}

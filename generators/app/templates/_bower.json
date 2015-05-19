@@ -1,0 +1,21 @@
+{
+  "name": "<%= appname %>",
+  "version": "0.0.0",
+  "homepage": "",
+  "authors": [
+    "<%= env.options.email %>"
+  ],
+  "moduleType": [
+    "amd"
+  ],
+  "license": "private",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {}
+}
+
