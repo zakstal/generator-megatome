@@ -1,20 +1,9 @@
 'use strict';
 
-// React, React-Router (and a few other libs) are globals via the webpack config
-
-if (__DEV__) {
-  require('common/debugging');
-}
-
 require('common/main.sass');
 
-// routes can be leveraged via client or browser
-let routes = require('routes'),
-  RouteHandler = Router.RouteHandler,
+let RouteHandler = Router.RouteHandler,
   TransitionGroup = React.addons.CSSTransitionGroup;
-
-// bootstrapping to the index.html
-let mount = document.getElementById('content');
 
 
 // App
@@ -34,10 +23,4 @@ class App extends React.Component{
 }
 App.contextTypes = {router: React.PropTypes.func};
 
-// HTML 5 routing is supposed in webpack and the basic express server
-Router.run(routes(App),
-  Router.HistoryLocation,
-  function (Handler) {
-    React.render(<Handler/>, mount);
-});
-
+module.exports = App;

@@ -13,6 +13,9 @@
   "scripts": {
     "go": "open http://localhost:8000 && BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/",
     "up": "BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/ ",
+    
+    "render": "webpack --render --progress --profile --colors",
+
     "modules": "webpack --production --progress --profile --colors --v --debug --display-modules",
     "build": "rm -rf ./dist && rm -rf ./build && mkdir ./build && webpack --production --progress --colors",
     "build-up": "npm run build && open http://localhost:8080 && node --harmony server/server.js",

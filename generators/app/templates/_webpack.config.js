@@ -1,5 +1,9 @@
 var isProd = (process.argv.indexOf('--production') >= 0);
-var options = (isProd ? require("./webpack.dist.config.js") : require("./webpack.hot.config.js"));
+var isRender = (process.argv.indexOf('--render') >= 0);
+var options = (isProd ? 
+  require("./webpack.dist.config.js") : 
+  (isRender ? require("./webpack.render.config.js") :
+    require("./webpack.hot.config.js")));
 
 module.exports = (function(options){
   var fs = require('fs'),
@@ -27,8 +31,8 @@ var globals = {
 
 var baseConfig = {
   entry: {
-    app: ['./src/main.js'],
-    'libs': Object.keys(globals).map(function(k){ return globals[k]; })
+    app: ['./src/bootstrap.js'],
+    libs: Object.keys(globals).map(function(k){ return globals[k]; })
   },
 
   output: {
@@ -92,7 +96,8 @@ var baseConfig = {
     extensions: ["", ".js", ".jsx"],
     /* allow for friendlier names to pull from preminimized files */
     alias: {
-      'baconjs': 'baconjs/dist/Bacon.min.js'
+      'baconjs': 'baconjs/dist/Bacon.min.js',
+      'react-proxy$': 'react-proxy/unavailable'
     },
     /* allow for root relative names in require */
     modulesDirectories: ['bower_components', 'node_modules', 'src']
@@ -140,7 +145,7 @@ function runPostConfig(config, options) {
 
   updateDebug(config, options);
   
-  updatePrerender(config, options);
+  updateIsomorphic(config, options);
   
   updateLibs(config, options);
   
@@ -152,8 +157,8 @@ function runPostConfig(config, options) {
 }
 
 function updateEntry(config, options) {
-  var entry = config.entry && config.entry.app || Object.keys(config.entry)
-  entry[0] = (options.prerender ? "./config/prerender?" : "") + entry[0];
+  var entry = config.entry && config.entry.app || Object.keys(config.entry);
+
   if (options.hotComponents) {
     entry.unshift('webpack/hot/only-dev-server');
     entry.unshift('webpack-dev-server/client?http://localhost:8000');
@@ -212,42 +217,39 @@ function updateDevServer(config, options) {
   }
 }
 
-function updatePrerender(config, options) {
-  if (options.prerender) {
-    config.target = "node";
-    config.output.path = "prerender/js";
-    config.output.libraryTarget = "libs";
+function updateIsomorphic(config, options) {
+  if (options.isomorphic) {
+    config.target = "node"; // don't prebuild anything in node_modules (maybe all modules).
+    config.output.path = "static/";
+    config.entry.app = "expose?renderRoute!./src/generate.js";
+    
+    // load everything sync instead
+    config.resolve.alias["react-proxy$"] = "react-proxy/unavailable";
 
-    config.resolveLoader.alias["react-proxy$"] = "react-proxy/unavailable";
+    // use superagent node version
+    config.plugins.push(new webpack.ProvidePlugin({"request": "superagent"}));
     config.externals.push(
-      /^react(\/.*)?$/,
       "superagent"
     );
 
-    Object.keys(config.module.loaders).map(function(loader) {
-       if (loader.loader.indexOf('style') === 0) {
-          if(options.prerender) {
-            loader.loader = "null-loader";
-          } else if (options.separateStylesheet) {
-            loader.loader = ExtractTextPlugin.extract("style", loader.loader.slice(6));
-          }
+    config.module.loaders = config.module.loaders.map(function(loader) {
+       if (loader.loader.indexOf('style!') === 0) {
+          loader.loader = loader.loader.replace('style!', '');
        }
-     });
-    if(options.separateStylesheet && !options.prerender) {
-      plugins.push(new ExtractTextPlugin("[name].css" + (options.longTermCaching ? "?[contenthash]" : "")));
-    }
+       return loader;
+    });
   }
 }
 
 function updateLibs(config, options) {
   if(options.commonsChunk) {
-    var name = "libs.js" + (options.longTermCaching && !options.prerender ? "?[chunkhash]" : "");
+    var name = "libs.js" + (options.longTermCaching && !options.isomorphic ? "?[chunkhash]" : "");
     config.plugins.push(new webpack.optimize.CommonsChunkPlugin("libs.js", name));
   }
 }
 
 function updateCaching(config, options) {
-  if (options.longTermCaching && !options.prerender){
+  if (options.longTermCaching && !options.isomorphic){
     config.output.filename += "?[chunkhash]";
     config.output.chunkFilename += "?[chunkhash]";
   }
@@ -295,6 +297,7 @@ function updateGlobals(config, options) {
 }
 
 runPostConfig(baseConfig, options);
+
 return baseConfig;
 
 }(options));
