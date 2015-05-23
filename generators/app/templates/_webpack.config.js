@@ -75,13 +75,9 @@ var baseConfig = {
       test: [/images\//],
       loader: 'url?limit=8192?name=assets/images/[name].[ext]'
     }, {
-      /* File Exporter to include any images */
-      test: [/images\//],
-      loader: 'file?name=assets/images/[name].[ext]'
-    }, {
       /* File Exporter to include index */
-      test: [/index.html$/],
-      loader: 'file?name=[name].html'
+      test: [/index.html$/, /\.(ico)/],
+      loader: 'file?name=[name].[ext]'
     }]
   },
 
@@ -96,8 +92,7 @@ var baseConfig = {
     extensions: ["", ".js", ".jsx"],
     /* allow for friendlier names to pull from preminimized files */
     alias: {
-      'baconjs': 'baconjs/dist/Bacon.min.js',
-      'react-proxy$': 'react-proxy/unavailable'
+      
     },
     /* allow for root relative names in require */
     modulesDirectories: ['bower_components', 'node_modules', 'src']
@@ -141,11 +136,11 @@ function runPostConfig(config, options) {
   
   updateLinting(config, options);
 
+  updateIsomorphic(config, options);
+  
   updateLoaders(config, options);
 
   updateDebug(config, options);
-  
-  updateIsomorphic(config, options);
   
   updateLibs(config, options);
   
@@ -154,6 +149,10 @@ function runPostConfig(config, options) {
   updatePlugins(config, options);
 
   updateGlobals(config, options);
+
+  config.plugins.push(
+    new webpack.DefinePlugin({process:{env:{BROWSER_ENV:(config.target === 'web') }}})
+  );
 }
 
 function updateEntry(config, options) {
@@ -181,10 +180,6 @@ function updateLinting(config, options) {
       loader: 'jsxhint'
     });
   }
-}
-
-function updateLoaders(config, options) {
-  config.module.noParse.push(/(\-|\.)min.js$/); /* don't parse minified files */
 }
 
 function updateDebug(config, options) {
@@ -219,25 +214,38 @@ function updateDevServer(config, options) {
 
 function updateIsomorphic(config, options) {
   if (options.isomorphic) {
+    
     config.target = "node"; // don't prebuild anything in node_modules (maybe all modules).
     config.output.path = "static/";
     config.entry.app = "expose?renderRoute!./src/generate.js";
     
     // load everything sync instead
     config.resolve.alias["react-proxy$"] = "react-proxy/unavailable";
-
+ 
     // use superagent node version
     config.plugins.push(new webpack.ProvidePlugin({"request": "superagent"}));
     config.externals.push(
       "superagent"
     );
-
-    config.module.loaders = config.module.loaders.map(function(loader) {
-       if (loader.loader.indexOf('style!') === 0) {
-          loader.loader = loader.loader.replace('style!', '');
-       }
-       return loader;
+ 
+    config.module.loaders.map(function(load) {
+      if (load.loader.indexOf('style!') === 0) {
+        load.loader = load.loader.replace('style!','');
+      }
     });
+  }
+}
+
+function updateLoaders(config, options) {
+  config.module.noParse.push(/(\-|\.)min.js$/); /* don't parse minified files */
+   
+  if (options.separateStylesheet) {
+    config.module.loaders.map(function(load) {
+      if (load.loader.indexOf('style!') === 0) {
+        load.loader = ExtractTextPlugin.extract("style", load.loader.replace('style!',''));
+      }
+    });
+    config.plugins.push(new ExtractTextPlugin("[name].css"));
   }
 }
 

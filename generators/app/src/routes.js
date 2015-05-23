@@ -2,6 +2,8 @@
 
 let { DefaultRoute, Route } = Router;
 
+// TODO: prerendering wants to chunk CSS but we need it to create one CSS file for prerendering in node
+
 let PageOneProxy = React.createClass({
   mixins: [require('react-proxy!pages/PageOne').Mixin], // NOTE: generally keep requires agnostic. This is an exception.
   statics: {

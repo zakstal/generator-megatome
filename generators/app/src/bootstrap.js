@@ -6,6 +6,8 @@ if (__DEV__) {
   require('common/debugging');
 }
 
+require('assets/favicon.ico');
+
 let App = require('App'),
   routes = require('routes');
 

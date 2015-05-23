@@ -11,6 +11,6 @@ module.exports = function(route, props){
 
   var content = renderRoute(route, props);
   var page = index.replace(regexMount, content);
-  console.log(page);
+  
   return page;
 };

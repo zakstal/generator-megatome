@@ -1,39 +1,42 @@
 # generator-megatome 
 
-**WARNING: Currently contains some Level environment specific settings that need to be moved to Yeoman stored config.**
-
-Master web stack setup for Level Money. 
+A React framework performance with batteries included but removable.
 
 Goals of this project:
 * Highly flexable and tunable React full-stack application.
-* Rich animations and transitions between pages/routes. Leverage the best UX of native apps in on the web.
-* Minimize the time to first paint. Optional server-side rendering on the initial load. XHR for subsquent loads. Reduce the weight of each page.
-* Offline support by default.
-* Create completely stateless apps. A functional application that works completely without a UI. 
-* The app can be froze or brought up at point in the state. This is a feature of a purely functional archetecture. The app can be snapshot at any point and rewinded/fast-forward to debug.
-* Decentralized, samatically versioned components. This allows descrete teams to use the same components but also add features and fix issues without the need for layers of converstations and approvals. Just update the component, increase the version number and start using the new version without breaking others.
-* Seemless transition from development, deployment, production debugging and scaling. Using docker, webpack-hot-loader and stateless FRP dataflows to snapshot application state.
+* **Animated pages/routes transitions.** Make web apps feel closer to native apps without jumping between pages. Support custom animations on a per-page-to-page level.
+* **Minimize the time to first paint.** Optional server-side rendering on the initial load. XHR for subsquent loads. Reduce the weight of each page.
+* **Offline support by default.**
+* Create completely **stateless apps**. A functional application that works completely without a UI. The app can be froze or brought up at point in the state. This is a feature of a purely functional archetecture. The app can be snapshot at any point and rewinded/fast-forward to debug.
+* **Decentralized, semantically versioned component library.** This allows discrete teams to use the same components but also add features and fix issues without the need for layers of converstations and approvals. Just update the component, increase the version number and start using the new version without breaking others.
+* **Unify environments and code base.** Seemless transition from development, deployment, production debugging and scaling. Using docker, webpack-hot-loader and stateless FRP dataflows to snapshot application state.
 
-The stack sets up and configures:
+Currently supported:
+* Code hot swapping for streamlined development environment
 * Isomorphic javascript (run either on the client or the server)
 * React w/ ES6/Babel support
-* React-Router w/ asynchronous page/api loading and animated transitions
-* Docker container for web app
+* React-Router w/ asynchronous page/data loading, animated transitions and HTML 5 routing
+* Docker container for distributing the web app
 * Webpack w/ hot-loader, proxy-server and advanced customizations
 * ImmutableJS
 * BaconJS
-* Bower w/ private repo
-* Barebone Express server
+* Express server
+* Source maps
+* Linting
+* Minifcation & gzipping
+* Code Chunking 
+* Image compression
 
 The coming road map includes:
+* Bower w/ private repo
 * Service Worker for offline support by default
 * preconfigured Docker private repo for bower
 * FRP framework for cursor properties
-* React rendering optimzations
-* Performance Debugging/tuning
+* React view diffing optimzations (to minimize render cycle workload)
+* Performance debugging/tuning
 * generator for pages that will update the router for sync loading
 * generator for components
-* generator for baconflow
+* generator for dataflow
 
 
 ## Getting Started

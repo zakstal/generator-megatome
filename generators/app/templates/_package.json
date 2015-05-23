@@ -11,7 +11,7 @@
   "mainInput": "src/main.js",
   "mainOutput": "dist/index.html",
   "scripts": {
-    "go": "open http://localhost:8000 && BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/",
+    "go": "webpack --render --progress && webpack --production --progress && nodemon --harmony server/server.js && BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/",
     "up": "BUILD_DEV=1 webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dist/ ",
     
     "render": "webpack --render --progress --profile --colors",

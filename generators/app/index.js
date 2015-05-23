@@ -84,7 +84,7 @@ module.exports = yeoman.generators.Base.extend({
           'node-sass'
         ]),
         bowerdeps: (!this.env.options.bower ? null : ['bower']),
-        expressdeps: (!this.env.options.express ? null : ['express','body-parser']),
+        expressdeps: (!this.env.options.express ? null : ['express','body-parser','compression']),
         appdeps: (!this.env.options.standardApp ? null : [
           'baconjs',
           'immutable',
