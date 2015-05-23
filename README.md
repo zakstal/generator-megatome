@@ -50,7 +50,9 @@ npm install -g yo
 2. download the generator
 
 ```bash
-npm install -g generator-megatome
+cd generator-megatome // navigate to the folder
+npm link // links the folder globally
+// npm install -g generator-megatome
 ```
 
 3. Create a new project
