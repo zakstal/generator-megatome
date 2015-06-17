@@ -5,9 +5,10 @@ RUN mkdir /app
 WORKDIR /app
 
 ADD package.json /app/package.json
-RUN npm install --production
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install --production
+RUN cp -a /tmp/node_modules /app/
 
-ADD VERSION /app/VERSION
 ADD src /app/src
 ADD server /app/server
 ADD webpack.dist.config.js /app/webpack.dist.config.js

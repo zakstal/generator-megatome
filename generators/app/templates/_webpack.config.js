@@ -7,7 +7,7 @@ var options = (isProd ?
 
 module.exports = (function(options){
   var fs = require('fs'),
-  version = fs.readFileSync("./VERSION"),
+  version = require('./package.json').version,
   path = require("path"),
   assign = require('object-assign'),
   webpack = require("webpack"),
