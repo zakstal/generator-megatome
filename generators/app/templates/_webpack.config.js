@@ -15,7 +15,8 @@ module.exports = (function(options){
   ExtractTextPlugin = require("extract-text-webpack-plugin"),
   CompressionPlugin = require("compression-webpack-plugin"),
   StatsPlugin = require('stats-webpack-plugin'),
-  GZipPlugin = require('compression-webpack-plugin');
+  GZipPlugin = require('compression-webpack-plugin'),
+  devPort = process.env.PORT = process.env.PORT || 8000;
 
 var globals = {
   React: 'react/addons',
@@ -113,6 +114,7 @@ var baseConfig = {
   devServer: {
     contentBase: 'dist/',
     proxy: null,
+    https: false,
     historyApiFallback: true,
     stats: {
       cached: false,
@@ -160,7 +162,7 @@ function updateEntry(config, options) {
 
   if (options.hotComponents) {
     entry.unshift('webpack/hot/only-dev-server');
-    entry.unshift('webpack-dev-server/client?http://localhost:8000');
+    entry.unshift('webpack-dev-server/client?http'+(options.https ? 's':'')+'://localhost:'+devPort);
   }
 }
 
@@ -190,12 +192,12 @@ function updateDebug(config, options) {
 
 function updateDevServer(config, options) {
   if (options.devServer) {
-    config.output.publicPath = "http://localhost:8000/";
+    config.output.publicPath = 'http'+(options.https ? 's':'')+'://localhost:'+devPort+'/';
     config.output.chunkFilename = "[name]-[id].js";
   }
 
   if (options.proxy) {
-    config.devServer.proxy = {'*': { target: 'http://localhost:8080' }};
+    config.devServer.proxy = options.proxy;
   }
 
   if (options.hotComponents) {
