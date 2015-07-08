@@ -97,6 +97,7 @@ module.exports = yeoman.generators.Base.extend({
          ]),
         routerdeps: (!this.env.options.router ? null : [
           'react-async',
+          'rc-css-transition-group',
           'react-proxy-loader',
           'react-router'
          ]),
@@ -188,7 +189,6 @@ module.exports = yeoman.generators.Base.extend({
 
       cp('_server.js','server/server.js');
       cp('_index.html','src/assets/index.html');
-      cp('_VERSION','VERSION');
     }
   },
 

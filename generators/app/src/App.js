@@ -3,8 +3,7 @@
 require('common/main.sass');
 
 let RouteHandler = Router.RouteHandler,
-  TransitionGroup = React.addons.CSSTransitionGroup;
-
+  CSSTransitionGroup = require('rc-css-transition-group');
 
 // App
 class App extends React.Component{
@@ -14,9 +13,9 @@ class App extends React.Component{
       <div className='app'>
         {/* insert navigation header here */}
         {/* this enables the page transitions */}
-        <TransitionGroup transitionName="fade">
+        <CSSTransitionGroup transitionName="fade">
           <RouteHandler key={activeRouteName} />
-        </TransitionGroup>
+        </CSSTransitionGroup>
       </div>
     );
   }

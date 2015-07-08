@@ -19,7 +19,7 @@ module.exports = (function(options){
   devPort = process.env.PORT = process.env.PORT || 8000;
 
 var globals = {
-  React: 'react/addons',
+  React: 'react',
   Router: 'react-router',
   Immutable: 'immutable',
   Bacon: 'baconjs',
@@ -66,7 +66,7 @@ var baseConfig = {
     }, {
       /* convert sass */
       test: /\.sass/,
-      loader: 'style!css!sass?indentedSyntax=sass&includePaths[]=' + (__dirname, "./src")
+      loader: 'style!css!sass?sourceMap=true&indentedSyntax=sass&includePaths[]=' + (__dirname, "./src")
     }, {
       /* Embed Fonts */
       test: /\.(eot|woff|ttf)$/,
@@ -194,6 +194,7 @@ function updateDevServer(config, options) {
   if (options.devServer) {
     config.output.publicPath = 'http'+(options.https ? 's':'')+'://localhost:'+devPort+'/';
     config.output.chunkFilename = "[name]-[id].js";
+    config.devServer.https = options.https || false;
   }
 
   if (options.proxy) {
@@ -210,7 +211,8 @@ function updateDevServer(config, options) {
     })
     config.devServer.hot = true
     config.plugins.push(new webpack.HotModuleReplacementPlugin());
-    // also include <script src="http://localhost:8000/webpack-dev-server.js"></script> in index.html
+    // include --inline to the start command 
+    // OR add <script src="http://localhost:8000/webpack-dev-server.js"></script> in index.html
   }
 }
 
