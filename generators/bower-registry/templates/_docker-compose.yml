@@ -1,0 +1,33 @@
+# Bower Repo
+# Data for the git repo and bower will be saved on the local disk at /data
+#
+# run command for the flight:
+#   docker-compose -p bower up
+
+gogs:
+  image: codeskyblue/docker-gogs
+  environment:
+    - USER=root
+    - USERNAME=root
+  ports: 
+    - "10021:22"
+    - "10081:3000"
+  volumes: 
+    - /data/gogs:/data
+  command: ./gogs web
+
+# docker run -v /data/gogs:/data -p 10021:22 -p 10081:3000 -e USER=root -e USERNAME=root --name gogs -d codeskyblue/docker-gogs ./gogs web
+
+bower:
+  image: tandrup/private-bower
+  environment:
+    - ADDRESS=bower.level
+  ports:
+    - "5678:5678"
+    - "6789:6789"
+    - "7891:7891"
+  volumes: 
+    - /data/bower:/data
+
+# docker run -v /data/bower:/data -p 5678:5678 -p 6789:6789 -p 7891:7891 -e ADDRESS=your-address.url --name bower -d tandrup/private-bower 
+

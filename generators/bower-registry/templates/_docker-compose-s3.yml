@@ -1,0 +1,25 @@
+# data will be saved onto an S3 volume
+
+gogs:
+  extends:
+  	file: docker-compose.yml
+  	service: gogs
+
+# docker run -v /data/gogs:/data -p 10021:22 -p 10081:3000 -e USER=root -e USERNAME=root --name gogs -d codeskyblue/docker-gogs ./gogs web
+
+bower:
+	extends:
+		file: docker-compose.yml
+		service: bower
+
+# docker run -v /data/bower:/data -p 5678:5678 -p 6789:6789 -p 7891:7891 -e ADDRESS=bower.level --name bower -d tandrup/private-bower 
+
+data:
+  image: s3
+  privileged: true
+  env_file:
+    - s3.env
+  volumes_from:
+    - gogs
+    - bower
+# docker run -e APP_BUCKET=<YOU-BUCKET_NAME> --env-file bower-s3.env --name s3 -v /data:/data -d --privileged s3

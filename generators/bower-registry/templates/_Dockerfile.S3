@@ -1,0 +1,12 @@
+FROM misakai/s3fs
+
+RUN mkdir /s3
+RUN apt-get install -y unison
+
+CMD while [ 1 ]; do unison -batch -silent /s3/ /data/ 2>/dev/null &; sleep 600; done
+
+# to build
+# docker build -f Dockerfile.S3 -t s3 .
+#
+# to run
+# docker run --env-file bower-s3.env --name s3 -v ~/Desktop/data:/data --privileged s3
