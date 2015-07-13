@@ -18,6 +18,13 @@ app.use('/static', function(req, res){
   res.send(render(path));
 });
 
+// Style-guide is exposed in a dev environment
+if (process.env.DEV) {
+	app.use('/style-guide.html', function(req, res){
+  	res.send(require('./style-guide')());
+	});	
+}
+
 // html5 routing
 app.all('[^\.]+', (req, res) =>
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html')));
