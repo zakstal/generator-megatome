@@ -1,0 +1,24 @@
+{
+  "name": "<%= ComponentName %>",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/<%= ComponentName %>.js",
+  "bin": "bin/<%= ComponentName %>.min.js",
+  "scripts": {
+    "build": "rm -rf ./bin && webpack --production --progress --colors",
+    "up": "webpack-dev-server --watch --progress --colors --port 8000 --inline --content-base dev/ ",
+    
+  },
+  "author": "",
+  "dependencies": {
+<%= env.options.sassdeps %>
+<%= env.options.bowerdeps %>
+<%= env.options.expressdeps %>
+<%= env.options.routerdeps %>
+<%= env.options.appdeps %>
+<%= env.options.webpackdeps.slice(0,-2) %>
+  },
+  "devDependencies": {
+<%= env.options.testdeps %>
+<%= env.options.devdeps.slice(0,-2) %>
+}

@@ -1,0 +1,24 @@
+{
+  "name": "<%= ComponentName %>",
+  "version": "0.0.1",
+  "homepage": "https://docker.level/bower/AppBar",
+  "authors": [
+    "<%= email %>"
+  ],
+  "main": "./src/CoreAppBar.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "react": "~0.13.2"
+  }
+}
