@@ -2,6 +2,8 @@
 
 A React stack of libraries built to deliver rich UIs, simplicity and performance for developers, server, network and users.
 
+# This is a Proof of Concept. It's not recommended to be in production yet.
+
 ## Features
 
 * **Use libraries not frameworks.** The power of the web comes from leveraging everyone's best ideas. Don't get locked into a large framework that's hard to get out of and doesn't let you to try new libraries. Any or all of these pieces can be swapped out for something that fits your needs better or when a better tool comes along. The current tool box is React for views, ES6/Babel for cleaner code, React-Router for page transitions and HTML5 routing, docker for running the app anywhere, webpack for deployment optimizations, express for proxying/server APIs/optional HTML generation, Bower for component versioning/distribution, Immutable JS for data. 
