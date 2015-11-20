@@ -1,16 +1,13 @@
-'use strict';
 
-class PageTwo extends React.Component{
-  render() {
-    var activeRouteName = this.context.router.getCurrentPath() || '/';
+module.exports = React.createClass({
+  display: "PageOne",
+  render(){
+    var activeRouteName = this.props.location.pathname || '/';
     return (
       <div className='page'>
         <h1>Page Two @ {activeRouteName}</h1>
-        <Router.Link to="one">Go to Page One</Router.Link> 
+        <ReactRouter.Link to="/one">Go to Page One</ReactRouter.Link>
       </div>
     );
-  }
-}
-PageTwo.contextTypes = {router: React.PropTypes.func};
-
-module.exports = PageTwo;
+  },
+});

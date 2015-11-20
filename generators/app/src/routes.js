@@ -1,45 +1,25 @@
-'use strict';
+let { Router, Route } = ReactRouter;
+let App = require('App');
 
-let { DefaultRoute, Route } = Router;
-
-// TODO: prerendering wants to chunk CSS but we need it to create one CSS file for prerendering in node
-
-let PageOneProxy = React.createClass({
-  mixins: [require('react-proxy!pages/PageOne').Mixin], // NOTE: generally keep requires agnostic. This is an exception.
-  statics: {
-    /* ensure the new page is loaded then animate to the new page */
-    willTransitionTo: function (transition, params, query, callback) {
-      require.ensure([], function() {
-        var Component = require('pages/PageOne');
-        // do any async data loading here
-        callback();
-      }, 'PageOne'); // FYI this names the chunk in webpack
+// routes
+var routes = {
+  path: '/',
+  component: App,
+  onEnter: (router, replaceWith) => {
+    if (router.location.pathname === '/') {
+      replaceWith(null, '/one');
     }
-  }
-});
-
-let PageTwoProxy = React.createClass({
-  mixins: [require('react-proxy!pages/PageTwo').Mixin],
-  statics: {
-    /* ensure the new page is loaded then animate to the new page */
-    willTransitionTo: function (transition, params, query, callback) {
-      require.ensure([], function() {
-        var Component = require('pages/PageTwo');
-        // do any async data loading here
-        callback();
-      }, 'PageTwo');
-    }
-  }
-});
-
-//routes
-var routes = (App) => (
-  <Route handler={App}>
-    <DefaultRoute handler={PageOneProxy} />
-    <Route path="/one" name="one" handler={PageOneProxy} />
-    <Route path="/two" name="two" handler={PageTwoProxy} />
-  </Route>
-);
-
+  },
+  childRoutes:[
+    {
+      path:"/one",
+      getComponents:(a, cb) => require.ensure([], require => {cb(null, require("pages/PageOne"));})
+    },
+    {
+      path:"/two",
+      getComponents:(a, cb) => require.ensure([], require => {cb(null, require("pages/PageTwo"));})
+    },
+  ]
+};
 
 module.exports = routes;

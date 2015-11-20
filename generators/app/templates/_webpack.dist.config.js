@@ -7,4 +7,5 @@ module.exports = {
   devtool: "source-map",
   gzip: true,
   stats: true,
+  baseLanguage: "en",
 };

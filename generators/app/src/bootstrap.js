@@ -1,4 +1,9 @@
-'use strict';
+require('assets/icons/AppIcon152x152.png');
+require('assets/icons/AppIcon120x120.png');
+require('assets/icons/AppIcon76x76.png');
+require('assets/icons/AppIcon60x60.png');
+require('assets/manifest.json');
+require('assets/favicon.ico');
 
 // React, React-Router (and a few other libs) are globals via the webpack config
 
@@ -6,17 +11,26 @@ if (__DEV__) {
   require('common/debugging');
 }
 
-require('assets/favicon.ico');
-
 let App = require('App'),
+  render = require('react-dom').render,
+  assign = require('object-assign'),
+  { Router } = ReactRouter,
+  { createHistory }= require('history'),
+  history = createHistory(),
   routes = require('routes');
 
 // bootstrapping to the index.html
-let mount = document.getElementById('app');
+let mount = window.document.getElementById('app');
+
+// const enforceAuth = (router, replaceWith) => {
+//   /* If you have any login put it here. */
+// };
+// routes.childRoutes.map(r => assign(r, {onEnter: enforceAuth}));
+// routes.onEnter = enforceAuth;
+
 
 // HTML 5 routing is supposed in webpack and the basic express server
-Router.run(routes(App),
-  Router.HistoryLocation,
-  function (Handler) {
-    React.render(<Handler/>, mount);
-});
+render(
+  <Router history={history}>
+    {routes}
+  </Router>, mount);

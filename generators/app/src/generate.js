@@ -6,12 +6,12 @@ var App = require('App'),
 var generate = function generate(path, props) {
   var html = null;
   Router.run(
-    routes, 
+    routes,
     path, 
-    (Handler) => 
+    (Handler) =>
       html = React.renderToString(React.createFactory(Handler)(props))
   );
   return html;
-}
+};
 
 module.exports = generate;

@@ -1,25 +1,34 @@
-'use strict';
-
 require('common/main.sass');
 
-let RouteHandler = Router.RouteHandler,
-  CSSTransitionGroup = require('rc-css-transition-group');
+var versionInfo = (__DEV__ ? `v${require("../package.json").version}` : "");
+
+
+let { Spring } = require('react-motion');
 
 // App
-class App extends React.Component{
-  render() {
-    var activeRouteName = this.context.router.getCurrentPath() || '/';
+let App = React.createClass({
+  getInitialState:() => ({
+    loaded: false,
+  }),
+  componentDidMount(){
+    this.setState({loaded:true});
+  },
+  render(){
+    var activeRouteName = this.props.location.pathname || '/';
+    let start = (!this.state.loaded ? 1 : 0);
+
     return (
       <div className='app'>
-        {/* insert navigation header here */}
-        {/* this enables the page transitions */}
-        <CSSTransitionGroup transitionName="fade">
-          <RouteHandler key={activeRouteName} />
-        </CSSTransitionGroup>
+
+        <Spring defaultValue={{val:start}} endValue={{val:1}}>
+          {interpolated =>
+            <div style={{display: 'block', height: '100%', opacity: interpolated.val}}>
+              {this.props.children}
+            </div>}
+        </Spring>
       </div>
     );
   }
-}
-App.contextTypes = {router: React.PropTypes.func};
+});
 
 module.exports = App;

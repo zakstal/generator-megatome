@@ -1,0 +1,14 @@
+{
+  "name": "Web Application Manifest Sample",
+  "icons": [
+    {
+      "src": "AppIcon152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "density": 2.0
+    }
+  ],
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "landscape"
+}
