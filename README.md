@@ -78,7 +78,7 @@ npm run render
 Sometimes ease of deployment is more important and page load speed. The `embed` target will package all JS, CSS, JSON and images needed for a site and bundle it all into one single js file. If you need separated files and assets for faster page load speed use the normal `build` or `render` targets.
 
 ```javascript
-/* Package up your entire app into a light vm. */
+/* Create a single .js with all images, css and code. Great for offline prototype or deploying to stupid CMSs */
 npm run embed
 
 ```
