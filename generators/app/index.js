@@ -98,6 +98,7 @@ module.exports = yeoman.generators.Base.extend({
       cp('_webpack.config.js','webpack.config.js');
       cp('_webpack.dist.config.js','webpack.dist.config.js');
       cp('_webpack.hot.config.js','webpack.hot.config.js');
+      cp('_webpack.embed.config.js','webpack.embed.config.js');
       cp('_webpack.render.config.js','webpack.render.config.js');
 
       cp('_server.js','server/server.js');

@@ -1,9 +1,11 @@
 var isProd = (process.argv.indexOf('--production') >= 0);
 var isRender = (process.argv.indexOf('--render') >= 0);
+var isEmbed = (process.argv.indexOf('--embed') >= 0);
 var options = (isProd ?
   require("./webpack.dist.config.js") :
   (isRender ? require("./webpack.render.config.js") :
-    require("./webpack.hot.config.js")));
+    (isEmbed ? require("./webpack.embed.config.js") :
+      require("./webpack.hot.config.js"))));
 
 module.exports = (function(options){
   var fs = require('fs'),
@@ -23,6 +25,7 @@ var globals = {
   React: 'react',
   ReactDom: 'react-dom',
   ReactRouter: 'react-router',
+  Perf: 'react-addons-perf',
   'react-motion': 'react-motion',
   assign: 'object-assign',
   request: 'superagent',
@@ -39,7 +42,7 @@ var baseConfig = {
     publicPath: '',
     path: 'dist/',
     filename: "[name].js",
-    sourceMapFilename: 'sourcemaps/[file].map',
+    sourceMapFilename: '[file].map',
     chunkFilename: "[name].js",
     libraryTarget: undefined,
     pathinfo: false
@@ -56,7 +59,8 @@ var baseConfig = {
       /* convert all source files */
       test: /\.(js|jsx)$/,
       include: [/src/,/bower_components/],
-      loader: 'jsx?harmony!babel'
+      exclude: [/(node_modules)/],
+      loader: 'babel?plugins[]=transform-runtime&presets[]=es2015&presets[]=stage-0&presets[]=react&cacheDirectory=true',
     }, {
       test: /\.json$/,
       loader: 'json',
@@ -68,7 +72,7 @@ var baseConfig = {
     }, {
       /* convert sass */
       test: /\.sass/,
-      loader: 'style!css!sass?sourceMap=true&indentedSyntax=sass&includePaths[]=' + (__dirname, "./src")
+      loader: 'style!css!sass?sourceMap=true&indentedSyntax=sass&includePaths[]=' + (__dirname +"./src")
     }, {
       /* Export Fonts */
       test: /\.(eot|woff|ttf)$/,
@@ -79,8 +83,13 @@ var baseConfig = {
       exclude:/icons/,
       loader: 'url?limit=8192&name=assets/images/[name].[ext]'
     }, {
+      /* File Exporter to include any images */
+      test: /\.(png|jpg|jpeg|svg|gif)$/,
+      include:/icons/,
+      loader: 'file?name=[name].[ext]'
+    }, {
       /* File Exporter to include index */
-      test: [/index.html$/, /\.(png|jpg|jpeg|svg|gif|ico)$/],
+      test: [/index\.html$/, /\.(ico)/],
       loader: 'file?name=[name].[ext]'
     }]
   },
@@ -96,7 +105,6 @@ var baseConfig = {
     extensions: ["", ".js", ".jsx"],
     /* allow for friendlier names to pull from preminimized files */
     alias: {
-
     },
     /* allow for root relative names in require */
     modulesDirectories: ['bower_components', 'node_modules', 'src']
@@ -108,8 +116,8 @@ var baseConfig = {
     /* "Compiler" switches and embeding versioning. Dead code stripping will remove. */
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(version),
-      __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false')),
-      __PRERELEASE__: JSON.stringify(JSON.parse(process.env.BUILD_PRERELEASE || 'false'))
+      __PROD__: JSON.stringify(JSON.parse(process.env.NODE_ENV === "production" || 'false')),
+      __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false'))
     }), /* BUILD_DEV=1 BUILD_PRERELEASE=1 webpack and `webpack -p` removes dead code */
 
     ],
@@ -122,7 +130,11 @@ var baseConfig = {
     stats: {
       cached: false,
       exclude: [/node_modules/,/bower_components/]
-    }
+    },
+    watchOptions: {
+      aggregateTimeout: 1,
+      poll: 100
+    },
   },
 
   /* settings for jshint */
@@ -130,7 +142,6 @@ var baseConfig = {
     "globals": { "__DEV__": true }
   },
 }
-
 
 function runPostConfig(config, options) {
   updateEntry(config, options);
@@ -142,6 +153,8 @@ function runPostConfig(config, options) {
   updateLinting(config, options);
 
   updateIsomorphic(config, options);
+
+  updateEmbed(config, options);
 
   updateLoaders(config, options);
 
@@ -206,7 +219,7 @@ function updateDevServer(config, options) {
 
   if (options.hotComponents) {
     config.module.loaders.some(function(loader) {
-      if(loader.loader.indexOf('jsx') === 0){
+      if(loader.test.toString().indexOf('jsx') > -1){
         loader.loader = 'react-hot!' + loader.loader;
         return true;
       }
@@ -228,16 +241,34 @@ function updateIsomorphic(config, options) {
 
     // use superagent node version
     config.plugins.push(new webpack.ProvidePlugin({"request": "superagent"}));
-    config.externals.push(
-      "superagent"
-    );
+    assign(config.externals, {"superagent":"superagent"});
 
-    // inline all the styles
     config.module.loaders.map(function(load) {
       if (load.loader.indexOf('style!') === 0) {
         load.loader = load.loader.replace('style!','');
       }
     });
+  }
+}
+
+function updateEmbed(config, options) {
+  if (options.embed) {
+    config.output.path = "embed/";
+    config.entry.libs.map(function(l){
+      config.entry.app.push(l)
+    });
+    delete config.entry.libs;
+    delete config.output.chunkFilename;
+    delete config.output.libraryTarget;
+
+    config.module.loaders.map(function(loader){
+      console.log(loader.test)
+      if (loader.test && loader.test.exec && loader.test.exec('fake.png')){
+        loader.loader = 'url?limit=9999999'
+      }
+    })
+
+    config.plugins.push(new webpack.optimize.LimitChunkCountPlugin({maxChunks:1}))
   }
 }
 
@@ -271,7 +302,6 @@ function updateCaching(config, options) {
 }
 
 function updatePlugins(config, options) {
-  // Planned feature: create custom index file with bootstrapping
   config.plugins.push(new HtmlWebpackPlugin({
     filename: 'index.html',
     template: 'src/assets/index.html'
@@ -287,14 +317,15 @@ function updatePlugins(config, options) {
         "process.env": {
           NODE_ENV: JSON.stringify("production")
         },
-        __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false'))
+        __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false')),
+        __version__: version,
       }),
       new webpack.NoErrorsPlugin()
     );
   }
 
   if (options.lang){
-    var langExp = new RegExp("/^\.\/("+options.baseLanguage+")$/");
+    var langExp = new RegExp("/^\.\/("+options.lang+")$/");
     config.plugins.push(new ContextReplacementPlugin(/moment\.js[\/\\]lang$/, langExp));
   }
 
@@ -319,7 +350,7 @@ baseConfig.devtool = options.devtool;
 runPostConfig(baseConfig, options);
 
 /* uncomment to test webpack config */
-// console.log(JSON.parse(baseConfig, undefined, 1))
+// console.log(baseConfig)
 
 return baseConfig;
 

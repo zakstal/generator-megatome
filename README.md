@@ -1,15 +1,15 @@
-# generator-megatome 
+# generator-megatome
 
 A React stack of libraries built to deliver rich UIs, simplicity and performance for developers, server, network and users.
 
 ## Features
 
-* **Use libraries not frameworks.** The power of the web comes from leveraging everyone's best ideas. Don't get locked into a large framework that's hard to get out of and doesn't let you to try new libraries. Any or all of these pieces can be swapped out for something that fits your needs better or when a better tool comes along. The current tool box is React for views, ES6/Babel for cleaner code, React-Router for page transitions and HTML5 routing, docker for running the app anywhere, webpack for deployment optimizations, express for proxying/server APIs/optional HTML generation, Bower for component versioning/distribution, Immutable JS for data. 
+* **Use libraries not frameworks.** The power of the web comes from leveraging everyone's best ideas. Don't get locked into a large framework that's hard to get out of and doesn't let you to try new libraries. Any or all of these pieces can be swapped out for something that fits your needs better or when a better tool comes along. The current tool box is React for views, ES6/Babel for cleaner code, React-Router for page transitions and HTML5 routing, docker for running the app anywhere, webpack for deployment optimizations, express for proxying/server APIs/optional HTML generation, Bower for component versioning/distribution, Immutable JS for data.
 * **Hot swap live code.** Using the webpack-dev-server to hot swap live code with __NO__ page reloads. The included source map support means you can debugger the actual code in the browser.
 * **Unify environments.** Enable a seamless transition from development, qa, production, debugging and scaling. Megatome uses Docker, Webpack hot swapping, webpack dev server to proxy external servers/services to deliver a full life cycle.
-* **Universal code base.** A single boolean switch will allow the code to be ran on the client (w/o a headless browser to eat up all your server's CPU). 
+* **Universal code base.** A single boolean switch will allow the code to be ran on the client (w/o a headless browser to eat up all your server's CPU).
 * **Optimized for development AND delivery.** Structure the code base so that it's best for developers and leverage best practices to deliver your app faster then everyone else. Pick which deployment options are best for your users. Single toggle switches for: generating HTML in node, Code Chunking, pre-gzip, minification, source maps, view dependency graph, long-term caching, optimize images, create responsive images and proxy calls to other servers.
-* **Rich UI with animations between pages/routes.** Make web apps feel closer to native apps without jumping between pages or popping items in and out. Maintain a clean, consistent experience while loading data and assets. 
+* **Rich UI with animations between pages/routes.** Make web apps feel closer to native apps without jumping between pages or popping items in and out. Maintain a clean, consistent experience while loading data and assets.
 * **Decentralized, semantically versioned component library.** Whether working in a small team or very large teams allow components to be built and versioned independently. It promotes highly reuseable code as well as enhancing communication between development, design and business groups. There is a one touch install of a private bower registry via Docker.
 
 
@@ -44,7 +44,47 @@ yo megatome MyAppName
 npm run go
 ```
 
-## Run code server-side
+## Same Code Base, Multiple Deploy Targets
+
+### Dev mode
+
+Dev mode will turn on hot swap reloads and no minification. This will update your code without refreshing the browser and all in under a second. Once you used HMR everything else is horrible.
+
+```javascript
+npm start
+```
+
+### Standard Deployment
+
+Standard build will separate CSS, images and JS. JS code will be chunked for optimal loading. Use `require.ensure` on routes instead of normal `import` to hint at Webpack on where best to separate JS code. Images used with the resize-image-loader will all create optimized and minified images to load without any server support needed. In our production environment we get 2 second load times over 3G celluar internet. Faster speeds mean less user abandonment.
+
+```javascript
+npm run build
+```
+
+### Server-side rendering
+
+For each faster speeds use the `render` target. This has a small express server that can render any route in your entire app server side. The HTML and CSS is loaded first. This minimizes network load as well as skips a lot of bootup process in the browser. No javascript means it by passes everything and sends HTML/CSS straight to the rendering pipeline. In our use we can achieve render times on 3G connects, for any page in the site, in about 800 miliseconds.
+
+One word of advise, when you have that little time to process, deliver and paint, every extra step adds overhead. Webpack turns our async code to sync and we have a data layer with React that allows us to render everything from a static JSON rather than an event system like in Flux and Redux. This generator doesn't make any assumptions about what data layer you choose with React.
+
+```javascript
+npm run render
+```
+
+
+### Embed Target - Web Page in a Box
+
+Sometimes ease of deployment is more important and page load speed. The `embed` target will package all JS, CSS, JSON and images needed for a site and bundle it all into one single js file. If you need separated files and assets for faster page load speed use the normal `build` or `render` targets.
+
+```javascript
+/* Package up your entire app into a light vm. */
+npm run embed
+
+```
+
+
+## Universal/Isomorphic code.
 
 The goal of every developer to have the page start to render in under 2 seconds. Many metrics from Bing, Amazon and other so that any page that takes longer than 2 seconds to load will see users leave before the page loads and **you will LOSE 2% to 4% of revenue because of slow page load.** This is **REGARDLESS** of the user's connection speed. So you need to render in 2 seconds on a 3G connection. Use [webpagetest.org](http://www.webpagetest.org/) with the 3G connection under advanced options to test.
 
@@ -55,7 +95,7 @@ npm run render // This will create a stat sync version of the app for node to ru
 
 node server/server.js // run the server
 
-// The built-in express server will check if it can render statically and pre-render HTML. If not it will send the default bootstrapping for client-side rendering. 
+// The built-in express server will check if it can render statically and pre-render HTML. If not it will send the default bootstrapping for client-side rendering.
 var everythingButFilesRegex = /^[^\.]+$/;
 var canPrerender = fs.existsSync(path.join(__dirname, '..', 'static', 'app.js'));
 app.use(everythingButFilesRegex, (req, res) => {
@@ -71,7 +111,7 @@ app.use(everythingButFilesRegex, (req, res) => {
 
 ## Webpack config options
 
-Webpack is great and sucks at the same time. It's does a million wonderful things for your code base and deployment but is very hard to setup everything just right. The aim to to create a few of the most important settings as simple toggles so you don't have to mess with it but can tune the deployment when you need to. 
+Webpack is great and sucks at the same time. It's does a million wonderful things for your code base and deployment but is very hard to setup everything just right. The aim to to create a few of the most important settings as simple toggles so you don't have to mess with it but can tune the deployment when you need to.
 
 ```javascript
   isomorphic: true, /* Create a version to run server-side. default: false. unless running the npm run render command. */
@@ -80,7 +120,7 @@ Webpack is great and sucks at the same time. It's does a million wonderful thing
   longTermCaching: false, /* Create hash of file name so unless it changes, it won't download the file again. */
   separateStylesheet: false, /* Separate CSS from JS. default: false. This means less files to download separately and allow hot swapping to work for CSS. */
   minimize: false, /* Minify code. Default for production build is true. */
-  devtool: "cheap-module-eval-source-map", /* Create source maps. Dev source maps build only what is needed. Production source maps go into the /build folder by deafult so they are never deployed to the end-users. */ 
+  devtool: "cheap-module-eval-source-map", /* Create source maps. Dev source maps build only what is needed. Production source maps go into the /build folder by deafult so they are never deployed to the end-users. */
   gzip: false, /* Gzip code after minified. This allows you to see the true deployment size as well as optionally send pre-gziped files that is just one less thing for the server to do. */
   stats: false, /* Generate a dependency graph of your app. This helps you see bottle necks and see the complexity of your app. Upload the file to http://webpack.github.io/analyse/*/
 };
@@ -90,7 +130,7 @@ Webpack is great and sucks at the same time. It's does a million wonderful thing
 
 Hot swapping code is the equivalent as big of a revolution as having a debugger. Hot swapping will watch for changes in your code, compile the minimal change and push it to the browser directly where it just replaces itself on the current page. The entire state of your page is unchanged and the new changes are just live. It's magic.
 
-Megatome has hot swapping out of the box. Just use `npm run up` and open the page in your browser. If you have another server in Ruby or whatever connecting to S3 or other custom things, the hot swap server will proxy over those calls automatically. 
+Megatome has hot swapping out of the box. Just use `npm run up` and open the page in your browser. If you have another server in Ruby or whatever connecting to S3 or other custom things, the hot swap server will proxy over those calls automatically.
 
 ```javascript
 /* start a local dev server that will hot swap code, proxy an external server and create source maps. */
@@ -100,7 +140,7 @@ npm run up
 module.exports = {
   devtool: "cheap-module-eval-source-map", // enable source maps
   proxy: {'*': {target: 'http://localhost:8080'}}, // proxy another server
-  devServer: true, 
+  devServer: true,
   hotComponents: true, // hot swap code
   bower: true, // use bower for components
   debug: true
@@ -113,15 +153,16 @@ The excuse of "It runs on my machine." needs to die. Docker killed that excuse. 
 
 ```javascript
 /* Package up your entire app into a light vm. */
-npm run docker-build 
+npm run docker-build
 
 /* Run the vm of your app locally. */
 npm run docker-run
 
-/* Push your vm to Docker Hub or your private repo. (You'll have to ochistrate deployment seperatly). */
+/* Push your vm to Docker Hub or your private repo. (You'll have to orchestrate deployment seperatly). */
 npm run docker-push
 
 ```
+
 
 ## Animated Page Transitions
 
@@ -192,7 +233,7 @@ PageOne.getAsyncData = () => {
 module.exports = PageOne;
 ```
 
-## Responsive images 
+## Responsive images
 
 A big waste of network load is sending images that are much large than the display. Using webpack loaders we can let the browser know which alternate sizes are available so that it can choose the best size based on screen size, pixel density and network connection speed.
 
