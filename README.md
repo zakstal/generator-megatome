@@ -46,7 +46,7 @@ npm run go
 
 ## Same Code Base, Multiple Deploy Targets
 
-### Dev mode
+### Dev mode - Instant refresh
 
 Dev mode will turn on hot swap reloads and no minification. This will update your code without refreshing the browser and all in under a second. Once you used HMR everything else is horrible.
 
@@ -54,7 +54,7 @@ Dev mode will turn on hot swap reloads and no minification. This will update you
 npm start
 ```
 
-### Standard Deployment
+### Standard Deployment - 2s page loads & offline (coming soon)
 
 Standard build will separate CSS, images and JS. JS code will be chunked for optimal loading. Use `require.ensure` on routes instead of normal `import` to hint at Webpack on where best to separate JS code. Images used with the resize-image-loader will all create optimized and minified images to load without any server support needed. In our production environment we get 2 second load times over 3G celluar internet. Faster speeds mean less user abandonment.
 
@@ -62,18 +62,18 @@ Standard build will separate CSS, images and JS. JS code will be chunked for opt
 npm run build
 ```
 
-### Server-side rendering
+### Server-side prebooting - <1s page loads & offline (coming soon)
 
 For each faster speeds use the `render` target. This has a small express server that can render any route in your entire app server side. The HTML and CSS is loaded first. This minimizes network load as well as skips a lot of bootup process in the browser. No javascript means it by passes everything and sends HTML/CSS straight to the rendering pipeline. In our use we can achieve render times on 3G connects, for any page in the site, in about 800 miliseconds.
 
-One word of advise, when you have that little time to process, deliver and paint, every extra step adds overhead. Webpack turns our async code to sync and we have a data layer with React that allows us to render everything from a static JSON rather than an event system like in Flux and Redux. This generator doesn't make any assumptions about what data layer you choose with React.
+One word of advise, when you have that little time to process, deliver and paint, every extra step adds overhead. Webpack turns our async code to sync and we have a data layer with React that allows us to render everything from a static JSON rather than an event system like in Flux and Redux. This generator doesn't make any assumptions about what data layer you choose with React. More details at [http://bit.ly/spa-in-2-seconds-over-3g](http://bit.ly/spa-in-2-seconds-over-3g).
 
 ```javascript
 npm run render
 ```
 
 
-### Embed Target - Web Page in a Box
+### Embed Target - Web Page in a Box for easy CMS deploys
 
 Sometimes ease of deployment is more important and page load speed. The `embed` target will package all JS, CSS, JSON and images needed for a site and bundle it all into one single js file. If you need separated files and assets for faster page load speed use the normal `build` or `render` targets.
 
