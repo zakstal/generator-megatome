@@ -114,16 +114,21 @@ app.use(everythingButFilesRegex, (req, res) => {
 Webpack is great and sucks at the same time. It's does a million wonderful things for your code base and deployment but is very hard to setup everything just right. The aim to to create a few of the most important settings as simple toggles so you don't have to mess with it but can tune the deployment when you need to.
 
 ```javascript
+{
   isomorphic: true, /* Create a version to run server-side. default: false. unless running the npm run render command. */
+  embed: true, /* ignore all chunking and include all images, css, JSON, JS and other assests into a single file. Great for CMS  */
   bower: true, /* search for bower components as well.*/
   commonsChunk: true, /* Split code in multiple chunks to allow the user to only download code that is used on that page. */
-  longTermCaching: false, /* Create hash of file name so unless it changes, it won't download the file again. */
+  longTermCaching: false, /* Add a hash to the file name. Unless the hash changes, the browser wont download it again. */
   separateStylesheet: false, /* Separate CSS from JS. default: false. This means less files to download separately and allow hot swapping to work for CSS. */
   minimize: false, /* Minify code. Default for production build is true. */
   devtool: "cheap-module-eval-source-map", /* Create source maps. Dev source maps build only what is needed. Production source maps go into the /build folder by deafult so they are never deployed to the end-users. */
+  devServer: true, /* HMR dev mode */
+  proxy: {'*': {target: 'http://localhost:8080'}}, /* transparently proxy unknown to another backend server, like ruby or node.*/ 
   gzip: false, /* Gzip code after minified. This allows you to see the true deployment size as well as optionally send pre-gziped files that is just one less thing for the server to do. */
   stats: false, /* Generate a dependency graph of your app. This helps you see bottle necks and see the complexity of your app. Upload the file to http://webpack.github.io/analyse/*/
-};
+  lang: "en", /* only include a single language. useful excluding extra language files from packages like moment.js */ 
+}
 ```
 
 ## Hot swapping code with source maps
