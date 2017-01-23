@@ -288,7 +288,8 @@ Server-side rendering is handled by the src/generate.js file. To source needs to
 
 ## License
 
-MIT
+* Apache 2.0 (Please see license file and headers)
+* Please review and agree to our [Contributor License Agreement](https://docs.google.com/forms/d/e/1FAIpQLSfwtl1s6KmpLhCY6CjiY8nFZshDwf_wrmNYx1ahpsNFXXmHKw/viewform) before contributing.
 
 
 ## Road Map
