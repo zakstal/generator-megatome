@@ -111,7 +111,7 @@ app.use(everythingButFilesRegex, (req, res) => {
 
 ## Webpack config options
 
-Webpack is great and sucks at the same time. It's does a million wonderful things for your code base and deployment but is very hard to setup everything just right. The aim to to create a few of the most important settings as simple toggles so you don't have to mess with it but can tune the deployment when you need to.
+Webpack is great and sucks at the same time. It's does a million wonderful things for your code base and deployment but is very hard to setup everything just right. The aim is to create a few of the most important settings as simple toggles so you don't have to mess with it but can tune the deployment when you need to.
 
 ```javascript
 {
